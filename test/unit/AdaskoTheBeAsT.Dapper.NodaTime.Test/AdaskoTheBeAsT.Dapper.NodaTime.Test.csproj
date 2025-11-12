@@ -1,24 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;net47;net471;net472;net48;net481;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net462;net47;net471;net472;net48;net481;net8.0;net9.0;net10.0</TargetFrameworks>
     <ProjectGuid>{5A2ED014-89DD-4254-92E0-79E009040AD7}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'net47' OR '$(TargetFramework)' == 'net471' OR '$(TargetFramework)' == 'net472'">
     <PackageReference Include="LocalDb" Version="16.1.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="LocalDb" Version="19.2.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'  OR '$(TargetFramework)' == 'net481' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="LocalDb" Version="20.0.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'  OR '$(TargetFramework)' == 'net481' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="LocalDb" Version="21.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'net47' OR '$(TargetFramework)' == 'net471' OR '$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'net48'  OR '$(TargetFramework)' == 'net481' ">

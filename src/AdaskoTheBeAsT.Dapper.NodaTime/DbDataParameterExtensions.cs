@@ -55,7 +55,7 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 #pragma warning disable S3878
             var blockExpr = Expression.Block(
                 new[] { convertedVar },
-                new Expression[] { assignConvertedExpr, getPropertyExpr, assignSqlDbTypeExpr });
+                new Expression[] { assignConvertedExpr, assignSqlDbTypeExpr });
 #pragma warning restore S3878
             return Expression.Lambda<Action<IDbDataParameter, SqlDbType>>(
                 blockExpr,

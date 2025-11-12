@@ -25,6 +25,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
         public override DateTimeZone Parse(object value)
         {
+            if (value is null || value is DBNull)
+            {
+                throw new DataException("Cannot convert null/DBNull to DateTimeZone");
+            }
+
             if (value is DateTimeZone dateTimeZone)
             {
                 return dateTimeZone;

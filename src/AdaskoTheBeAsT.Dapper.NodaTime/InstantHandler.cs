@@ -22,6 +22,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
         public override Instant Parse(object value)
         {
+            if (value is null || value is DBNull)
+            {
+                throw new DataException("Cannot convert null/DBNull to Instant");
+            }
+
             if (value is Instant instant)
             {
                 return instant;

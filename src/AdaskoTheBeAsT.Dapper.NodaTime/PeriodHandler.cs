@@ -23,6 +23,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
         public override Period Parse(object value)
         {
+            if (value is null || value is DBNull)
+            {
+                throw new DataException("Cannot convert null/DBNull to Period");
+            }
+
             if (value is Period period)
             {
                 return period;

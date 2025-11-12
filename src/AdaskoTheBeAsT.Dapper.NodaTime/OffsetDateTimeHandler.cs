@@ -22,6 +22,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
         public override OffsetDateTime Parse(object value)
         {
+            if (value is null || value is DBNull)
+            {
+                throw new DataException("Cannot convert null/DBNull to OffsetDateTime");
+            }
+
             if (value is OffsetDateTime offsetDateTime)
             {
                 return offsetDateTime;

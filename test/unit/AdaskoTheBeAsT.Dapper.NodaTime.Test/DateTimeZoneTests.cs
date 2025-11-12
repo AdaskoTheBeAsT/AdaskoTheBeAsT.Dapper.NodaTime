@@ -1,7 +1,7 @@
 using System.Linq;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Dapper;
-using FluentAssertions;
-using FluentAssertions.Execution;
 using NodaTime;
 using Xunit;
 

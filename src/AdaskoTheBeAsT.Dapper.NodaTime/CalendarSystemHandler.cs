@@ -22,6 +22,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
         public override CalendarSystem Parse(object value)
         {
+            if (value is null || value is DBNull)
+            {
+                throw new DataException("Cannot convert null/DBNull to CalendarSystem");
+            }
+
             if (value is CalendarSystem calendarSystem)
             {
                 return calendarSystem;

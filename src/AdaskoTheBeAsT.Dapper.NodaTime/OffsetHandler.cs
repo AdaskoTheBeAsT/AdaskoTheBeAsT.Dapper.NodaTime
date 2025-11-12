@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using Dapper;
 using NodaTime;
@@ -21,6 +22,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
         public override Offset Parse(object value)
         {
+            if (value is null || value is DBNull)
+            {
+                throw new DataException("Cannot convert null/DBNull to Offset");
+            }
+
             if (value is Offset offset)
             {
                 return offset;

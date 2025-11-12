@@ -22,6 +22,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
         public override LocalDateTime Parse(object value)
         {
+            if (value is null || value is DBNull)
+            {
+                throw new DataException("Cannot convert null/DBNull to LocalDateTime");
+            }
+
             if (value is LocalDateTime localDateTime)
             {
                 return localDateTime;

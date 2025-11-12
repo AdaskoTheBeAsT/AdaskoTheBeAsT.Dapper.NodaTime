@@ -25,6 +25,7 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
             SqlMapper.AddTypeHandler(OffsetHandler.Default);
             SqlMapper.AddTypeHandler(CalendarSystemHandler.Default);
             SqlMapper.AddTypeHandler(DateTimeZoneHandler.Default(provider));
+            SqlMapper.AddTypeHandler(PeriodHandler.Default);
         }
     }
 }
