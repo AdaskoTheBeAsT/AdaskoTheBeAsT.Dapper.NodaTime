@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net9.0;net10.0;</TargetFrameworks>
     <ProjectGuid>{70B9C8BA-511A-4DF7-B5BB-4371FEA1C798}</ProjectGuid>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryType>github</RepositoryType>
@@ -19,7 +19,7 @@
     <PackageProjectUrl>https://github.com/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.NodaTime</PackageProjectUrl>
     <PackageTags>dapper;nodatime;noda time</PackageTags>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <Deterministic>true</Deterministic>
@@ -29,7 +29,7 @@
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="NodaTime" Version="3.2.2" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />

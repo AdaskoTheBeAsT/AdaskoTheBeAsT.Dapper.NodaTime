@@ -1,98 +1,210 @@
 # AdaskoTheBeAsT.Dapper.NodaTime
 
-Noda Time support for Dapper - unofficial fork of Dapper-NodaTime project which development stopped some time ago.
-Matt Johnson-Pint is original author and maintainer of Dapper-NodaTime project.
-This is continuation of his work.
-Refreshed for currently available .NET versions.
+> 🚀 Seamless NodaTime integration for Dapper - because dates and times should just work.
 
-## Badges
-
-[![CodeFactor](https://www.codefactor.io/repository/github/adaskothebeast/adaskothebeast.dapper.nodatime/badge)](https://www.codefactor.io/repository/github/adaskothebeast/adaskothebeast.dapper.nodatime)
+[![NuGet Version](https://img.shields.io/nuget/v/AdaskoTheBeAsT.Dapper.NodaTime.svg?style=flat)](https://www.nuget.org/packages/AdaskoTheBeAsT.Dapper.NodaTime/)
+![Nuget](https://img.shields.io/nuget/dt/AdaskoTheBeAsT.Dapper.NodaTime)
 [![Build Status](https://adaskothebeast.visualstudio.com/AdaskoTheBeAsT.Dapper.NodaTime/_apis/build/status/AdaskoTheBeAsT.AdaskoTheBeAsT.Dapper.NodaTime?branchName=master)](https://adaskothebeast.visualstudio.com/AdaskoTheBeAsT.Dapper.NodaTime/_build/latest?definitionId=21&branchName=master)
-![Azure DevOps tests](https://img.shields.io/azure-devops/tests/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.NodaTime/21)
 ![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.NodaTime/21?style=plastic)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AdaskoTheBeAsT_AdaskoTheBeAsT.Dapper.NodaTime&metric=alert_status)](https://sonarcloud.io/dashboard?id=AdaskoTheBeAsT_AdaskoTheBeAsT.Dapper.NodaTime)
-![Sonar Tests](https://img.shields.io/sonar/tests/AdaskoTheBeAsT_AdaskoTheBeAsT.Dapper.NodaTime?server=https%3A%2F%2Fsonarcloud.io)
-![Sonar Test Count](https://img.shields.io/sonar/total_tests/AdaskoTheBeAsT_AdaskoTheBeAsT.Dapper.NodaTime?server=https%3A%2F%2Fsonarcloud.io)
-![Sonar Test Execution Time](https://img.shields.io/sonar/test_execution_time/AdaskoTheBeAsT_AdaskoTheBeAsT.Dapper.NodaTime?server=https%3A%2F%2Fsonarcloud.io)
-![Sonar Coverage](https://img.shields.io/sonar/coverage/AdaskoTheBeAsT_AdaskoTheBeAsT.Dapper.NodaTime?server=https%3A%2F%2Fsonarcloud.io&style=plastic)
-![Nuget](https://img.shields.io/nuget/dt/AdaskoTheBeAsT.Dapper.NodaTime)
-[![NuGet Version](https://img.shields.io/nuget/v/AdaskoTheBeAsT.Dapper.NodaTime.svg?style=flat)](https://www.nuget.org/packages/AdaskoTheBeAsT.Dapper.NodaTime/)
+[![CodeFactor](https://www.codefactor.io/repository/github/adaskothebeast/adaskothebeast.dapper.nodatime/badge)](https://www.codefactor.io/repository/github/adaskothebeast/adaskothebeast.dapper.nodatime)
 
-## Installation
+## Why This Library?
 
+Working with dates and times is hard. Working with them across database boundaries is harder. This library bridges the gap between [Dapper](https://github.com/DapperLib/Dapper)'s simplicity and [NodaTime](https://nodatime.org/)'s correctness, giving you:
+
+- ✅ **Type-safe** date/time operations across your data layer
+- ✅ **Zero configuration** for most common scenarios
+- ✅ **Battle-tested** with comprehensive test coverage
+- ✅ **Modern .NET** support (netstandard2.0, .NET 8, 9, 10)
+- ✅ **Production-ready** continuation of the original Dapper-NodaTime project
+
+## Quick Start
+
+### Installation
+
+```bash
+dotnet add package AdaskoTheBeAsT.Dapper.NodaTime
+```
+
+Or via Package Manager:
 ```powershell
 Install-Package AdaskoTheBeAsT.Dapper.NodaTime
 ```
 
-In your project startup sequence somewhere, call:
+### Setup (One Line!)
+
+Add this to your startup code:
 
 ```csharp
-DapperNodaTimeSetup.Register(<provider>);
+using AdaskoTheBeAsT.Dapper.NodaTime;
+using NodaTime;
+
+// Register all NodaTime type handlers
+DapperNodaTimeSetup.Register(DateTimeZoneProviders.Tzdb);
 ```
 
-Provider is one of the following date time zone providers:
+**That's it!** Now Dapper automatically handles all NodaTime types.
 
-1. DateTimeZoneProviders.Tzdb - IANA Time Zone Database
-2. DateTimeZoneProviders.Bcl - Windows registry
-
-That registers all of the type handlers.  Alternatively, you can register each type handler separately if you wish.
-For example:
+### Usage Example
 
 ```csharp
+using Dapper;
+using NodaTime;
+
+public class Event
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public LocalDateTime ScheduledAt { get; set; }
+    public Instant CreatedAt { get; set; }
+    public Duration Duration { get; set; }
+}
+
+// Query with NodaTime types - just works!
+using var connection = new SqlConnection(connectionString);
+var events = await connection.QueryAsync<Event>(
+    "SELECT Id, Name, ScheduledAt, CreatedAt, Duration FROM Events WHERE ScheduledAt > @date",
+    new { date = new LocalDateTime(2025, 11, 22, 9, 0) }
+);
+
+// Insert with NodaTime types - seamless!
+await connection.ExecuteAsync(
+    "INSERT INTO Events (Name, ScheduledAt, CreatedAt, Duration) VALUES (@Name, @ScheduledAt, @CreatedAt, @Duration)",
+    new Event 
+    { 
+        Name = "Team Meeting",
+        ScheduledAt = new LocalDateTime(2025, 11, 23, 10, 0),
+        CreatedAt = SystemClock.Instance.GetCurrentInstant(),
+        Duration = Duration.FromHours(1)
+    }
+);
+```
+
+## Supported Types & SQL Mappings
+
+| NodaTime Type | SQL Server Types | Description |
+|---------------|------------------|-------------|
+| `Instant` | `datetime`, `datetime2`, `datetimeoffset` | A point on the global timeline |
+| `LocalDateTime` | `datetime`, `datetime2` | Date and time without timezone |
+| `LocalDate` | `date`, `datetime`, `datetime2` | Just the date part |
+| `LocalTime` | `time`, `datetime`, `datetime2` | Just the time part |
+| `OffsetDateTime` | `datetimeoffset` | Date/time with UTC offset |
+| `Duration` | `bigint` | Elapsed time in nanoseconds |
+| `Period` | `varchar(176)` | Human-readable period (ISO8601) |
+| `Offset` | `int` | UTC offset in seconds |
+| `DateTimeZone` | `varchar(50)` | Time zone identifier |
+| `CalendarSystem` | `varchar(50)` | Calendar system identifier |
+
+## Advanced Configuration
+
+### Individual Handler Registration
+
+If you prefer granular control:
+
+```csharp
+using Dapper;
+
 SqlMapper.AddTypeHandler(LocalDateTimeHandler.Default);
+SqlMapper.AddTypeHandler(InstantHandler.Default);
+SqlMapper.AddTypeHandler(DurationHandler.Default);
+// ... register only what you need
 ```
 
-Work in progress.  Currently supports the following types:
+### Time Zone Providers
 
-- CalendarSystem - can be mapped to varchar(50)
-- DateTimeZone - can be mapped to varchar(50)
-- Duration - can be mapped to bigint
-- Instant - can be mapped to datetime, datetime2, datetimeoffset
-- LocalDate - can be mapped to date, datetime, datetime2
-- LocalDateTime - can be mapped to datetime, datetime2
-- LocalTime - can be mapped to time, datetime, datetime2
-- Offset - can be mapped to int
-- OffsetDateTime - can be mapped to datetimeoffset
-- Period - can be mapped to varchar(195) 
-It is written as for example
+Choose the right provider for your use case:
 
+```csharp
+// IANA Time Zone Database (recommended for cross-platform)
+DapperNodaTimeSetup.Register(DateTimeZoneProviders.Tzdb);
 
-Version 1 Max length of period is 195 characters (obsoleted).
-"Y:-2147483648 M:-2147483648 W:-2147483648 D:-2147483648 h:-9223372036854775808 m:-9223372036854775808 s:-9223372036854775808 ms:-9223372036854775808 t:-9223372036854775808 ns:-9223372036854775808"
+// Windows Registry (for Windows-specific applications)
+DapperNodaTimeSetup.Register(DateTimeZoneProviders.Bcl);
+```
 
-Where:
+## Database Schema Recommendations
 
-- Y - years
-- M - months
-- W - weeks
-- D - days
-- h - hours
-- m - minutes
-- s - seconds
-- ms - milliseconds
-- t - ticks
-- ns - nanoseconds
+```sql
+-- Recommended column types for best compatibility
+CREATE TABLE Events (
+    Id INT PRIMARY KEY,
+    Name NVARCHAR(255),
+    
+    -- For timezone-aware moments
+    CreatedAt DATETIMEOFFSET NOT NULL,
+    
+    -- For local date/time (no timezone)
+    ScheduledAt DATETIME2 NOT NULL,
+    
+    -- For date-only fields
+    EventDate DATE NOT NULL,
+    
+    -- For time-only fields
+    StartTime TIME NOT NULL,
+    
+    -- For durations
+    Duration BIGINT NOT NULL,
+    
+    -- For periods (human-readable)
+    RecurrencePeriod VARCHAR(176) NULL,
+    
+    -- For timezone reference
+    TimeZone VARCHAR(50) NOT NULL
+);
+```
 
-Version 2 uses Roundtrip format from NodaTime. Max length of period is 176 characters.
-"P-2147483648Y-2147483648M-2147483648W-2147483648DT-9223372036854775808H-9223372036854775808M-9223372036854775808S-9223372036854775808s-9223372036854775808t-9223372036854775808n"
+## Period Format
 
-Where:
+Periods are stored using ISO8601 roundtrip format (max 176 characters):
 
-- P - start of period as in ISO8601
-- Y - years as in ISO8601
-- M - months as in ISO8601
-- W - weeks as in ISO8601
-- D - days as in ISO8601
-- T - date and time SEPARATOR as in ISO8601
-- H - hours as in ISO8601
-- M - minutes as in ISO8601
-- S - seconds as in ISO8601
-- s - milliseconds
-- t - ticks
-- n - nanoseconds
+```
+P-2147483648Y-2147483648M-2147483648W-2147483648DT-9223372036854775808H-9223372036854775808M-9223372036854775808S-9223372036854775808s-9223372036854775808t-9223372036854775808n
+```
 
-Does not support:
+Example: `P1Y2M3W4DT5H6M7S` represents 1 year, 2 months, 3 weeks, 4 days, 5 hours, 6 minutes, and 7 seconds.
 
-- ZonedDateTime (although there is trick to keep properties separated and then by using mapping code or AutoMapper (or other mapper) 
-compose ZoneDateTime from LocalDateTime, CalendarSystem and DateTimeZone)
+## Known Limitations
+
+- **`ZonedDateTime`** is not directly supported. However, you can store its components separately:
+  ```csharp
+  public class EventWithZone
+  {
+      public LocalDateTime LocalDateTime { get; set; }
+      public DateTimeZone TimeZone { get; set; }
+      public CalendarSystem Calendar { get; set; }
+      
+      // Compose ZonedDateTime in your application layer
+      public ZonedDateTime ToZonedDateTime() => 
+          LocalDateTime.InZoneStrictly(TimeZone).WithCalendar(Calendar);
+  }
+  ```
+
+## Framework Support
+
+- **.NET Standard 2.0** (compatible with .NET Framework 4.6.1+, .NET Core 2.0+)
+- **.NET 8.0**
+- **.NET 9.0**
+- **.NET 10.0**
+
+## Contributing
+
+This project is a continuation of Matt Johnson-Pint's original [Dapper-NodaTime](https://github.com/mj1856/Dapper-NodaTime) project, kept alive and updated for modern .NET. Contributions are welcome!
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with tests
+4. Submit a pull request
+
+## Credits
+
+- **Original Author**: [Matt Johnson-Pint](https://github.com/mj1856)
+- **Current Maintainer**: Adam "AdaskoTheBeAsT" Pluciński
+
+## License
+
+[MIT License](LICENSE) - see the LICENSE file for details.
+
+---
+
+**Need Help?** Open an issue on [GitHub](https://github.com/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.NodaTime/issues) or check out the [NodaTime documentation](https://nodatime.org/).
