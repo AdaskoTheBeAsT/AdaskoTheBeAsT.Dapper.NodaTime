@@ -39,10 +39,12 @@
     <PropertyGroup>
       <ESqlite3Arch Condition="'$(PlatformTarget)' == 'x86'">x86</ESqlite3Arch>
       <ESqlite3Arch Condition="'$(ESqlite3Arch)' == ''">x64</ESqlite3Arch>
+      <NativeESqlite3Path>$(OutDir)runtimes\win-$(ESqlite3Arch)\native\e_sqlite3.dll</NativeESqlite3Path>
     </PropertyGroup>
-    <ItemGroup>
-      <NativeESqlite3 Include="$(OutDir)runtimes\win-$(ESqlite3Arch)\native\e_sqlite3.dll" />
-    </ItemGroup>
-    <Copy SourceFiles="@(NativeESqlite3)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <!-- SQLitePCLRaw copies the win-* native assets only when building on Windows. -->
+    <Copy SourceFiles="$(NativeESqlite3Path)"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(NativeESqlite3Path)')" />
   </Target>
 </Project>
