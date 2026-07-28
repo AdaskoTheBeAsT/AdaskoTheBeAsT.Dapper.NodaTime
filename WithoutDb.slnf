@@ -1,0 +1,9 @@
+{
+  "solution": {
+    "path": "AdaskoTheBeAsT.Dapper.NodaTime.slnx",
+    "projects": [
+      "src/AdaskoTheBeAsT.Dapper.NodaTime/AdaskoTheBeAsT.Dapper.NodaTime.csproj",
+      "test/unit/AdaskoTheBeAsT.Dapper.NodaTime.Test/AdaskoTheBeAsT.Dapper.NodaTime.Test.csproj"
+    ]
+  }
+}

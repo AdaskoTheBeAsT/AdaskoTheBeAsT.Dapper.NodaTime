@@ -1,0 +1,15 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>$(NoWarn);CC0022;CC0057;CC0091;MA0002;MA0004;CS8604;IDISP026;MA0048;SA1107;SA1116;SA1117;SA1128;SA1134;SA1201;SA1202;SA1402;SA1502;SA1513;SA1516;SA1649;SCS0018;SEC0116;xUnit1051</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.79" />
+    <PackageReference Include="Testcontainers" Version="4.13.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,1 @@
+CREATE TABLE NodaTimeRoundTrip (Id BIGINT PRIMARY KEY, InstantValue DATETIME(6) NULL, LocalDateValue DATE NULL, LocalDateTimeValue DATETIME(6) NULL, LocalTimeValue TIME(6) NULL, OffsetDateTimeValue DATETIME(6) NULL, OffsetValue INT NULL, DurationValue BIGINT NULL, PeriodValue VARCHAR(176) NULL, CalendarValue VARCHAR(50) NULL, ZoneValue VARCHAR(50) NULL)

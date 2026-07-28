@@ -5,28 +5,20 @@ using NodaTime;
 
 namespace AdaskoTheBeAsT.Dapper.NodaTime
 {
-    public sealed class InstantHandler
-        : SqlMapper.TypeHandler<Instant>
+    public sealed class InstantHandler : SqlMapper.TypeHandler<Instant>
     {
-        public static readonly InstantHandler Default = new();
+        private readonly INodaTimeTypeHandlerConfiguration _configuration;
 
-        private InstantHandler()
+        public InstantHandler(INodaTimeTypeHandlerConfiguration configuration)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public override void SetValue(IDbDataParameter parameter, Instant value)
-        {
-            parameter.Value = value.ToDateTimeUtc();
-            parameter.SetSqlDbType(SqlDbType.DateTime2);
-        }
+        public override void SetValue(IDbDataParameter parameter, Instant value) => _configuration.SetInstant(parameter, value);
 
         public override Instant Parse(object value)
         {
-            if (value is null || value is DBNull)
-            {
-                throw new DataException("Cannot convert null/DBNull to Instant");
-            }
-
+            NodaTimeValueParser.ThrowIfNull(value, "Instant");
             if (value is Instant instant)
             {
                 return instant;
@@ -34,13 +26,22 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
 
             if (value is DateTime dateTime)
             {
-                var dt = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
-                return Instant.FromDateTimeUtc(dt);
+                return Instant.FromDateTimeUtc(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc));
             }
 
             if (value is DateTimeOffset dateTimeOffset)
             {
                 return Instant.FromDateTimeOffset(dateTimeOffset);
+            }
+
+            if (value is string text)
+            {
+                if (text.EndsWith("Z", StringComparison.OrdinalIgnoreCase) || text.LastIndexOf('+') > 10 || text.LastIndexOf('-') > 10)
+                {
+                    return Instant.FromDateTimeOffset(NodaTimeValueParser.ParseDateTimeOffset(text, "Instant"));
+                }
+
+                return Instant.FromDateTimeUtc(DateTime.SpecifyKind(NodaTimeValueParser.ParseDateTime(text, "Instant"), DateTimeKind.Utc));
             }
 
             throw new DataException($"Cannot convert {value.GetType()} to NodaTime.Instant");

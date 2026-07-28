@@ -5,28 +5,20 @@ using NodaTime;
 
 namespace AdaskoTheBeAsT.Dapper.NodaTime
 {
-    public sealed class LocalDateTimeHandler
-        : SqlMapper.TypeHandler<LocalDateTime>
+    public sealed class LocalDateTimeHandler : SqlMapper.TypeHandler<LocalDateTime>
     {
-        public static readonly LocalDateTimeHandler Default = new();
+        private readonly INodaTimeTypeHandlerConfiguration _configuration;
 
-        private LocalDateTimeHandler()
+        public LocalDateTimeHandler(INodaTimeTypeHandlerConfiguration configuration)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public override void SetValue(IDbDataParameter parameter, LocalDateTime value)
-        {
-            parameter.Value = value.ToDateTimeUnspecified();
-            parameter.SetSqlDbType(SqlDbType.DateTime2);
-        }
+        public override void SetValue(IDbDataParameter parameter, LocalDateTime value) => _configuration.SetLocalDateTime(parameter, value);
 
         public override LocalDateTime Parse(object value)
         {
-            if (value is null || value is DBNull)
-            {
-                throw new DataException("Cannot convert null/DBNull to LocalDateTime");
-            }
-
+            NodaTimeValueParser.ThrowIfNull(value, "LocalDateTime");
             if (value is LocalDateTime localDateTime)
             {
                 return localDateTime;
@@ -35,6 +27,11 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
             if (value is DateTime dateTime)
             {
                 return LocalDateTime.FromDateTime(dateTime);
+            }
+
+            if (value is string text)
+            {
+                return LocalDateTime.FromDateTime(NodaTimeValueParser.ParseDateTime(text, "LocalDateTime"));
             }
 
             throw new DataException($"Cannot convert {value.GetType()} to NodaTime.LocalDateTime");

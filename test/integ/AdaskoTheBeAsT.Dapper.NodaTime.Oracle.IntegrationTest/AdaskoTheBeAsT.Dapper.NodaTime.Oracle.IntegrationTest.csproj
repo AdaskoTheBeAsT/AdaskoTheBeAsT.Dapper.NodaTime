@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net9.0;net8.0;net481;net48;net472</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\AdaskoTheBeAsT.Dapper.NodaTime.Oracle\AdaskoTheBeAsT.Dapper.NodaTime.Oracle.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\db\Oracle\001_CreateNodaTimeRoundTrip.sql" Link="db\001_CreateNodaTimeRoundTrip.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

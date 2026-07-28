@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net9.0;net8.0;net481;net48;net472;net471;net47;net462</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryType>github</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <Description>MySQL configuration for AdaskoTheBeAsT.Dapper.NodaTime.</Description>
+    <Authors>Adam "AdaskoTheBeAsT" Pluciński</Authors>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/AdaskoTheBeAsT/AdaskoTheBeAsT.Dapper.NodaTime</PackageProjectUrl>
+    <PackageTags>dapper;nodatime;mysql</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="[2.6.1,3.0.0)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AdaskoTheBeAsT.Dapper.NodaTime\AdaskoTheBeAsT.Dapper.NodaTime.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

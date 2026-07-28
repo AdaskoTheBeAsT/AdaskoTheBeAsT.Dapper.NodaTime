@@ -5,28 +5,20 @@ using NodaTime;
 
 namespace AdaskoTheBeAsT.Dapper.NodaTime
 {
-    public sealed class OffsetDateTimeHandler
-        : SqlMapper.TypeHandler<OffsetDateTime>
+    public sealed class OffsetDateTimeHandler : SqlMapper.TypeHandler<OffsetDateTime>
     {
-        public static readonly OffsetDateTimeHandler Default = new();
+        private readonly INodaTimeTypeHandlerConfiguration _configuration;
 
-        private OffsetDateTimeHandler()
+        public OffsetDateTimeHandler(INodaTimeTypeHandlerConfiguration configuration)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public override void SetValue(IDbDataParameter parameter, OffsetDateTime value)
-        {
-            parameter.Value = value.ToDateTimeOffset();
-            parameter.SetSqlDbType(SqlDbType.DateTimeOffset);
-        }
+        public override void SetValue(IDbDataParameter parameter, OffsetDateTime value) => _configuration.SetOffsetDateTime(parameter, value);
 
         public override OffsetDateTime Parse(object value)
         {
-            if (value is null || value is DBNull)
-            {
-                throw new DataException("Cannot convert null/DBNull to OffsetDateTime");
-            }
-
+            NodaTimeValueParser.ThrowIfNull(value, "OffsetDateTime");
             if (value is OffsetDateTime offsetDateTime)
             {
                 return offsetDateTime;
@@ -35,6 +27,16 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime
             if (value is DateTimeOffset dateTimeOffset)
             {
                 return OffsetDateTime.FromDateTimeOffset(dateTimeOffset);
+            }
+
+            if (value is DateTime dateTime)
+            {
+                return OffsetDateTime.FromDateTimeOffset(new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)));
+            }
+
+            if (value is string text)
+            {
+                return OffsetDateTime.FromDateTimeOffset(NodaTimeValueParser.ParseDateTimeOffset(text, "OffsetDateTime"));
             }
 
             throw new DataException($"Cannot convert {value.GetType()} to NodaTime.OffsetDateTime");
