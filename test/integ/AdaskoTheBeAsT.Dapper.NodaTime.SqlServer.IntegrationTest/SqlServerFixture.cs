@@ -10,7 +10,7 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.IntegrationTest
     public sealed class SqlServerFixture : DockerDatabaseFixture
     {
         public SqlServerFixture()
-            : base("mcr.microsoft.com/mssql/server:2022-latest", 1433, new Dictionary<string, string> { ["ACCEPT_EULA"] = "Y", ["MSSQL_SA_PASSWORD"] = "NodaTime!Passw0rd" }) { }
+            : base("mcr.microsoft.com/mssql/server:2025-latest", 1433, new Dictionary<string, string> { ["ACCEPT_EULA"] = "Y", ["MSSQL_SA_PASSWORD"] = "NodaTime!Passw0rd" }) { }
         protected override string SchemaFileName => "001_CreateNodaTimeRoundTrip.sql";
         public override DbConnection OpenConnection() => new SqlConnection($"Server={Host},{MappedPort};User ID=sa;Password=NodaTime!Passw0rd;TrustServerCertificate=True;Encrypt=False");
         protected override void ConfigureHandlers() => SqlServerDapperNodaTimeSetup.Register(DateTimeZoneProviders.Tzdb);
