@@ -78,11 +78,19 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test
 
         private async Task CreateDatabaseAsync()
         {
+#if NET8_0_OR_GREATER
+            await using var connection = new SqlConnection(_msSqlContainer.GetConnectionString());
+            await connection.OpenAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+            await using var command = connection.CreateCommand();
+            command.CommandText = CreateDatabaseSql;
+            await command.ExecuteNonQueryAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+#else
             using var connection = new SqlConnection(_msSqlContainer.GetConnectionString());
             await connection.OpenAsync().ConfigureAwait(false);
             using var command = connection.CreateCommand();
             command.CommandText = CreateDatabaseSql;
             await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+#endif
         }
 
         private string BuildConnectionString(string databaseName)

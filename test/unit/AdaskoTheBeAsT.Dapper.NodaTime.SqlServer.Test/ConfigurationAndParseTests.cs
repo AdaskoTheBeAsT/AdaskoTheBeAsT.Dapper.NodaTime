@@ -28,7 +28,7 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test
         {
             var parameter = new SqlParameter();
 
-            _configuration.SetPeriod(parameter, null);
+            _configuration.SetPeriod(parameter, value: null);
 
             parameter.DbType.Should().Be(DbType.AnsiString);
             parameter.Value.Should().Be(DBNull.Value);
@@ -63,8 +63,6 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test
             action.Should().Throw<ArgumentNullException>();
         }
 
-        private sealed class TestConfiguration : NodaTimeTypeHandlerConfigurationBase
-        {
-        }
+        private sealed class TestConfiguration : NodaTimeTypeHandlerConfigurationBase;
     }
 }

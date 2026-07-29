@@ -91,7 +91,7 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test
         [Fact]
         public void SqlServerConfiguration_SkipsNativeTypeForParametersWithoutSqlDbType()
         {
-            var parameter = new Mock<IDbDataParameter>(MockBehavior.Loose);
+            var parameter = new Mock<IDbDataParameter>(MockBehavior.Strict);
             parameter.SetupAllProperties();
 
             _configuration.SetDuration(parameter.Object, Duration.FromNanoseconds(5));

@@ -13,6 +13,6 @@
     <ProjectReference Include="..\..\..\src\AdaskoTheBeAsT.Dapper.NodaTime.PostgreSql\AdaskoTheBeAsT.Dapper.NodaTime.PostgreSql.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\db\PostgreSQL\001_CreateNodaTimeRoundTrip.sql" Link="db\001_CreateNodaTimeRoundTrip.sql" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="..\..\..\db\PostgreSQL\001_CreateNodaTimeRoundTrip.sql" Link="db\001_CreateNodaTimeRoundTrip.sql" LogicalName="db.001_CreateNodaTimeRoundTrip.sql" />
   </ItemGroup>
 </Project>

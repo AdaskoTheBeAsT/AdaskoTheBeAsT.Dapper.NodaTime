@@ -1,19 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
+using Xunit;
 
 namespace AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test
 {
     public sealed class DbVendorLibraryTestData
-        : IEnumerable<object[]>
+        : TheoryData<DbVendorLibrary>
     {
-        public IEnumerator<object[]> GetEnumerator()
+        public DbVendorLibraryTestData()
         {
-            yield return new object[] { DbVendorLibrary.MicrosoftSqlServer };
+            Add(DbVendorLibrary.MicrosoftSqlServer);
 #if NET462_OR_GREATER
-            yield return new object[] { DbVendorLibrary.SystemSqlServer };
+            Add(DbVendorLibrary.SystemSqlServer);
 #endif
         }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

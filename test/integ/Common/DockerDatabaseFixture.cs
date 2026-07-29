@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.IO;
 using System.Threading.Tasks;
 using Dapper;
 using DotNet.Testcontainers.Builders;
@@ -10,13 +9,14 @@ using Xunit;
 
 namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 {
-    public abstract class DockerDatabaseFixture : IAsyncLifetime
+    public abstract class DockerDatabaseFixture
+        : IAsyncLifetime
     {
         private readonly IContainer _container;
 
         protected DockerDatabaseFixture(string image, int port, IReadOnlyDictionary<string, string> environment)
         {
-            var builder = new ContainerBuilder(image).WithPortBinding(port, true);
+            var builder = new ContainerBuilder(image).WithPortBinding(port, assignRandomHostPort: true);
             foreach (var item in environment)
             {
                 builder = builder.WithEnvironment(item.Key, item.Value);
@@ -35,18 +35,23 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 #if NET8_0_OR_GREATER
         public async ValueTask InitializeAsync()
         {
-            await _container.StartAsync();
+            await _container.StartAsync(TestCancellation.Token);
             ConfigureHandlers();
             await WaitForDatabaseAsync();
             await ApplySchemaAsync();
         }
 
-        public ValueTask DisposeAsync() => _container.DisposeAsync();
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
+        }
 #endif
+
 #if NET462_OR_GREATER
         public async Task InitializeAsync()
         {
-            await _container.StartAsync();
+            await _container.StartAsync(TestCancellation.Token);
             ConfigureHandlers();
             await WaitForDatabaseAsync();
             await ApplySchemaAsync();
@@ -54,14 +59,15 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 
         public async Task DisposeAsync()
         {
-            await _container.DisposeAsync();
+            await DisposeAsyncCore();
         }
 #endif
+
         public abstract DbConnection OpenConnection();
 
         protected abstract void ConfigureHandlers();
 
-        protected abstract string SchemaFileName { get; }
+        protected virtual ValueTask DisposeAsyncCore() => _container.DisposeAsync();
 
         private async Task WaitForDatabaseAsync()
         {
@@ -76,13 +82,13 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 #if NET462_OR_GREATER
                     using var connection = OpenConnection();
 #endif
-                    await connection.OpenAsync();
+                    await connection.OpenAsync(TestCancellation.Token);
                     return;
                 }
                 catch (Exception exception)
                 {
                     lastException = exception;
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    await Task.Delay(TimeSpan.FromSeconds(2), TestCancellation.Token);
                 }
             }
 
@@ -91,17 +97,14 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 
         private async Task ApplySchemaAsync()
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "db", SchemaFileName);
-
+            var sql = await SchemaResource.ReadAsync(GetType().Assembly, TestCancellation.Token);
 #if NET8_0_OR_GREATER
-            var sql = await File.ReadAllTextAsync(path);
             await using var connection = OpenConnection();
 #endif
 #if NET462_OR_GREATER
-            var sql = File.ReadAllText(path);
             using var connection = OpenConnection();
 #endif
-            await connection.OpenAsync();
+            await connection.OpenAsync(TestCancellation.Token);
             await connection.ExecuteAsync(sql);
         }
     }

@@ -6,6 +6,6 @@
     <ProjectReference Include="..\..\..\src\AdaskoTheBeAsT.Dapper.NodaTime.SqlServer\AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\db\SqlServer\001_CreateNodaTimeRoundTrip.sql" Link="db\001_CreateNodaTimeRoundTrip.sql" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="..\..\..\db\SqlServer\001_CreateNodaTimeRoundTrip.sql" Link="db\001_CreateNodaTimeRoundTrip.sql" LogicalName="db.001_CreateNodaTimeRoundTrip.sql" />
   </ItemGroup>
 </Project>

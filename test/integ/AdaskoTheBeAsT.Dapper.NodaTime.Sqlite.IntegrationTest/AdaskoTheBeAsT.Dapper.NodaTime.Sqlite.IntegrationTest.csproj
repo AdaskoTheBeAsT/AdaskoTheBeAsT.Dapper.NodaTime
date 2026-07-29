@@ -29,7 +29,7 @@
     <ProjectReference Include="..\..\..\src\AdaskoTheBeAsT.Dapper.NodaTime.Sqlite\AdaskoTheBeAsT.Dapper.NodaTime.Sqlite.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\db\SQLite\001_CreateNodaTimeRoundTrip.sql" Link="db\001_CreateNodaTimeRoundTrip.sql" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="..\..\..\db\SQLite\001_CreateNodaTimeRoundTrip.sql" Link="db\001_CreateNodaTimeRoundTrip.sql" LogicalName="db.001_CreateNodaTimeRoundTrip.sql" />
   </ItemGroup>
 
   <!-- vstest shadow-copies .NET Framework test assemblies, so the loader never sees runtimes\<rid>\native. -->

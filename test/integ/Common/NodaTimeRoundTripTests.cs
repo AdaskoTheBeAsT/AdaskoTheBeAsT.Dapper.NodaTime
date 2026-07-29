@@ -1,4 +1,3 @@
-using System;
 using System.Data.Common;
 using System.Threading.Tasks;
 using AwesomeAssertions;
@@ -11,14 +10,10 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 {
     public abstract class NodaTimeRoundTripTests
     {
-        protected abstract DbConnection OpenConnection();
-
         protected virtual string ParameterPrefix => "@";
 
-        protected virtual OffsetDateTime NormalizeOffsetDateTime(OffsetDateTime value) => value;
-
         [Fact]
-        public async Task All_supported_types_round_trip()
+        public async Task All_supported_types_round_tripAsync()
         {
             var expected = TestRow.Create();
 #if NET8_0_OR_GREATER
@@ -27,12 +22,14 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 #if NET462_OR_GREATER
             using var connection = OpenConnection();
 #endif
-            await connection.OpenAsync();
+            await connection.OpenAsync(TestCancellation.Token);
             await connection.ExecuteAsync("DELETE FROM NodaTimeRoundTrip");
-            await connection.ExecuteAsync($@"INSERT INTO NodaTimeRoundTrip
+            await connection.ExecuteAsync(
+                $@"INSERT INTO NodaTimeRoundTrip
                 (Id, InstantValue, LocalDateValue, LocalDateTimeValue, LocalTimeValue, OffsetDateTimeValue, OffsetValue, DurationValue, PeriodValue, CalendarValue, ZoneValue)
                 VALUES
-                ({ParameterPrefix}Id, {ParameterPrefix}InstantValue, {ParameterPrefix}LocalDateValue, {ParameterPrefix}LocalDateTimeValue, {ParameterPrefix}LocalTimeValue, {ParameterPrefix}OffsetDateTimeValue, {ParameterPrefix}OffsetValue, {ParameterPrefix}DurationValue, {ParameterPrefix}PeriodValue, {ParameterPrefix}CalendarValue, {ParameterPrefix}ZoneValue)", expected);
+                ({ParameterPrefix}Id, {ParameterPrefix}InstantValue, {ParameterPrefix}LocalDateValue, {ParameterPrefix}LocalDateTimeValue, {ParameterPrefix}LocalTimeValue, {ParameterPrefix}OffsetDateTimeValue, {ParameterPrefix}OffsetValue, {ParameterPrefix}DurationValue, {ParameterPrefix}PeriodValue, {ParameterPrefix}CalendarValue, {ParameterPrefix}ZoneValue)",
+                expected);
 
             var actual = await connection.QuerySingleAsync<TestRow>($"SELECT * FROM NodaTimeRoundTrip WHERE Id = {ParameterPrefix}Id", new { expected.Id });
             actual.InstantValue.Should().Be(expected.InstantValue);
@@ -42,13 +39,13 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
             actual.OffsetDateTimeValue.Should().Be(NormalizeOffsetDateTime(expected.OffsetDateTimeValue!.Value));
             actual.OffsetValue.Should().Be(expected.OffsetValue);
             actual.DurationValue.Should().Be(expected.DurationValue);
-            PeriodPattern.Roundtrip.Format(actual.PeriodValue).Should().Be(PeriodPattern.Roundtrip.Format(expected.PeriodValue));
+            PeriodPattern.Roundtrip.Format(actual.PeriodValue!).Should().Be(PeriodPattern.Roundtrip.Format(expected.PeriodValue!));
             actual.CalendarValue!.Id.Should().Be(expected.CalendarValue!.Id);
             actual.ZoneValue!.Id.Should().Be(expected.ZoneValue!.Id);
         }
 
         [Fact]
-        public async Task Nullable_reference_types_round_trip_as_null()
+        public async Task Nullable_reference_types_round_trip_as_nullAsync()
         {
             var row = new TestRow { Id = 2 };
 #if NET8_0_OR_GREATER
@@ -57,7 +54,7 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
 #if NET462_OR_GREATER
             using var connection = OpenConnection();
 #endif
-            await connection.OpenAsync();
+            await connection.OpenAsync(TestCancellation.Token);
             await connection.ExecuteAsync($"DELETE FROM NodaTimeRoundTrip WHERE Id = {ParameterPrefix}Id", row);
             await connection.ExecuteAsync($"INSERT INTO NodaTimeRoundTrip (Id, PeriodValue, CalendarValue, ZoneValue) VALUES ({ParameterPrefix}Id, {ParameterPrefix}PeriodValue, {ParameterPrefix}CalendarValue, {ParameterPrefix}ZoneValue)", row);
 
@@ -67,18 +64,32 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.IntegrationTests.Common
             actual.ZoneValue.Should().BeNull();
         }
 
+        protected abstract DbConnection OpenConnection();
+
+        protected virtual OffsetDateTime NormalizeOffsetDateTime(OffsetDateTime value) => value;
+
         private sealed class TestRow
         {
             public long Id { get; set; }
+
             public Instant? InstantValue { get; set; }
+
             public LocalDate? LocalDateValue { get; set; }
+
             public LocalDateTime? LocalDateTimeValue { get; set; }
+
             public LocalTime? LocalTimeValue { get; set; }
+
             public OffsetDateTime? OffsetDateTimeValue { get; set; }
+
             public Offset? OffsetValue { get; set; }
+
             public Duration? DurationValue { get; set; }
+
             public Period? PeriodValue { get; set; }
+
             public CalendarSystem? CalendarValue { get; set; }
+
             public DateTimeZone? ZoneValue { get; set; }
 
             public static TestRow Create() => new()

@@ -16,7 +16,7 @@ namespace AdaskoTheBeAsT.Dapper.NodaTime.SqlServer
 #else
         private static readonly object SyncRoot = new();
 #endif
-        private static readonly Dictionary<Type, Action<IDbDataParameter, SqlDbType>?> Setters = new();
+        private static readonly Dictionary<Type, Action<IDbDataParameter, SqlDbType>?> Setters = [];
 
         internal static void TrySetSqlDbType(this IDbDataParameter parameter, SqlDbType sqlDbType)
         {
