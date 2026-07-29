@@ -3,7 +3,8 @@
     "path": "AdaskoTheBeAsT.Dapper.NodaTime.slnx",
     "projects": [
       "src/AdaskoTheBeAsT.Dapper.NodaTime/AdaskoTheBeAsT.Dapper.NodaTime.csproj",
-      "test/unit/AdaskoTheBeAsT.Dapper.NodaTime.Test/AdaskoTheBeAsT.Dapper.NodaTime.Test.csproj"
+      "src/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.csproj",
+      "test/unit/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test.csproj"
     ]
   }
 }

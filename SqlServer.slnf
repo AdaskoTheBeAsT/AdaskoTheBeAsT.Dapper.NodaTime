@@ -4,7 +4,8 @@
     "projects": [
       "src/AdaskoTheBeAsT.Dapper.NodaTime/AdaskoTheBeAsT.Dapper.NodaTime.csproj",
       "src/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.csproj",
-      "test/unit/AdaskoTheBeAsT.Dapper.NodaTime.Test/AdaskoTheBeAsT.Dapper.NodaTime.Test.csproj"
+      "test/unit/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.Test.csproj",
+      "test/integ/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.IntegrationTest/AdaskoTheBeAsT.Dapper.NodaTime.SqlServer.IntegrationTest.csproj"
     ]
   }
 }
