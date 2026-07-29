@@ -1,13 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net8.0;net9.0;net10.0;</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.1;netstandard2.0;net481;net48;net472;net471;net47;net462</TargetFrameworks>
     <ProjectGuid>{70B9C8BA-511A-4DF7-B5BB-4371FEA1C798}</ProjectGuid>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryType>github</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Description>Provides Noda Time support for Dapper</Description>
-    <PackageVersion>5.0.0</PackageVersion>
     <Authors>Matt Johnson; forked and updated Adam "AdaskoTheBeAsT" Pluciński</Authors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
@@ -26,13 +25,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="NodaTime" Version="3.2.2" />
+    <PackageReference Include="Dapper" Version="[2.1.79,3.0.0)" />
+    <PackageReference Include="NodaTime" Version="[3.3.3,4.0.0)" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

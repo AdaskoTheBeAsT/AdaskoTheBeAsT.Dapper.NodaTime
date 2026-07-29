@@ -1,4 +1,15 @@
 <Project>
   <!-- Deterministic build workaround -->
   <Import Project="$(MSBuildThisFileDirectory)DeterministicBuild.targets" />
+
+  <!--
+    SQLitePCLRaw.lib.e_sqlite3 2.1.12 no longer ships runtimes\win-arm\native\e_sqlite3.dll,
+    but its net461 targets file still declares a Content item for it, breaking .NET Framework builds (MSB3030).
+  -->
+  <Target Name="RemoveMissingWinArmESqlite3" BeforeTargets="AssignTargetPaths">
+    <ItemGroup>
+      <Content Remove="@(Content)"
+               Condition="'%(Link)' == 'runtimes\win-arm\native\e_sqlite3.dll' AND !Exists('%(FullPath)')" />
+    </ItemGroup>
+  </Target>
 </Project>

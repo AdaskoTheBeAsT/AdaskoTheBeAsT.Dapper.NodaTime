@@ -6,36 +6,28 @@ using NodaTime.Text;
 
 namespace AdaskoTheBeAsT.Dapper.NodaTime
 {
-    public sealed class PeriodHandler
-        : SqlMapper.TypeHandler<Period>
+    public sealed class PeriodHandler : SqlMapper.TypeHandler<Period>
     {
-        public static readonly PeriodHandler Default = new();
+        private readonly INodaTimeTypeHandlerConfiguration _configuration;
 
-        private PeriodHandler()
+        public PeriodHandler(INodaTimeTypeHandlerConfiguration configuration)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public override void SetValue(IDbDataParameter parameter, Period? value)
-        {
-            parameter.Value = value == null ? DBNull.Value : PeriodPattern.Roundtrip.Format(value);
-            parameter.SetSqlDbType(SqlDbType.VarChar);
-        }
+        public override void SetValue(IDbDataParameter parameter, Period? value) => _configuration.SetPeriod(parameter, value);
 
         public override Period Parse(object value)
         {
-            if (value is null || value is DBNull)
-            {
-                throw new DataException("Cannot convert null/DBNull to Period");
-            }
-
+            NodaTimeValueParser.ThrowIfNull(value, "Period");
             if (value is Period period)
             {
                 return period;
             }
 
-            if (value is string str)
+            if (value is string text)
             {
-                return PeriodPattern.Roundtrip.Parse(str).GetValueOrThrow();
+                return PeriodPattern.Roundtrip.Parse(text).GetValueOrThrow();
             }
 
             throw new DataException($"Cannot convert {value.GetType()} to NodaTime.Period");

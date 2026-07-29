@@ -5,31 +5,22 @@ using NodaTime;
 
 namespace AdaskoTheBeAsT.Dapper.NodaTime
 {
-    public sealed class DateTimeZoneHandler
-        : SqlMapper.TypeHandler<DateTimeZone>
+    public sealed class DateTimeZoneHandler : SqlMapper.TypeHandler<DateTimeZone>
     {
         private readonly IDateTimeZoneProvider _provider;
+        private readonly INodaTimeTypeHandlerConfiguration _configuration;
 
-        private DateTimeZoneHandler(IDateTimeZoneProvider provider)
+        public DateTimeZoneHandler(IDateTimeZoneProvider provider, INodaTimeTypeHandlerConfiguration configuration)
         {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public static DateTimeZoneHandler Default(IDateTimeZoneProvider provider) => new(provider);
-
-        public override void SetValue(IDbDataParameter parameter, DateTimeZone? value)
-        {
-            parameter.Value = value == null ? DBNull.Value : value.Id;
-            parameter.SetSqlDbType(SqlDbType.VarChar);
-        }
+        public override void SetValue(IDbDataParameter parameter, DateTimeZone? value) => _configuration.SetDateTimeZone(parameter, value);
 
         public override DateTimeZone Parse(object value)
         {
-            if (value is null || value is DBNull)
-            {
-                throw new DataException("Cannot convert null/DBNull to DateTimeZone");
-            }
-
+            NodaTimeValueParser.ThrowIfNull(value, "DateTimeZone");
             if (value is DateTimeZone dateTimeZone)
             {
                 return dateTimeZone;
